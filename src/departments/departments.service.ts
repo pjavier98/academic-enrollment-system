@@ -18,7 +18,7 @@ export class DepartmentsService {
 
   async findAll() {
     const departments = await this.departmentRepository.find({
-      relations: ['secretariats'],
+      relations: ['secretariats', 'teachers'],
     });
 
     return departments;
