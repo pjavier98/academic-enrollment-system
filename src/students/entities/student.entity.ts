@@ -1,8 +1,8 @@
 import { Department } from 'src/departments/entities/department.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
-@Entity('teachers')
-export class Teacher {
+@Entity('students')
+export class Student {
   @PrimaryGeneratedColumn()
   id: string;
 

@@ -5,9 +5,16 @@ import { DepartmentsModule } from './departments/departments.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SecretariatsModule } from './secretariats/secretariats.module';
 import { TeachersModule } from './teachers/teachers.module';
+import { StudentsModule } from './students/students.module';
 
 @Module({
-  imports: [DepartmentsModule, SecretariatsModule, TypeOrmModule.forRoot(), TeachersModule],
+  imports: [
+    TypeOrmModule.forRoot(),
+    DepartmentsModule,
+    SecretariatsModule,
+    TeachersModule,
+    StudentsModule,
+  ],
   controllers: [AppController],
   providers: [AppService],
 })
