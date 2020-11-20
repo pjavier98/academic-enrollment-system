@@ -7,13 +7,16 @@ O aluno só pode se matricular em disciplinar do departamento ao qual seu curso 
 A matrícula so deve ser concretizada se o aluno cumpriu o número de crédito mínimo
 
 ## Use Case 03
-A matrícula so deve ser concretizada se o aluno já pagou as matérias de pre-requisito
+O aluno não pode se matrícular em matérias que ele já tenha cursado e passado
 
 ## Use Case 04
+A matrícula so deve ser concretizada se o aluno já pagou as matérias de pre-requisito
+
+## Use Case 05
 O aluno de graduação pode se matricular em materias de graduação somente se tiver completado
 pelo menos 170 créditos
 
-## Use Case 05
+## Use Case 06
 Os alunos de pós-graduação não podem cursar disciplinas de graduação
 
 # Consultas do sistema:

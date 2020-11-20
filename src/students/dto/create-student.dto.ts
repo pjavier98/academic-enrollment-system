@@ -1,4 +1,4 @@
-import { IsString } from 'class-validator';
+import { IsISSN, IsString } from 'class-validator';
 
 export class CreateStudentDto {
   @IsString()
@@ -9,4 +9,7 @@ export class CreateStudentDto {
 
   @IsString()
   readonly departmentId: string;
+
+  @IsString()
+  readonly enrollmentNumber: string;
 }

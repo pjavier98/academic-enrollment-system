@@ -12,6 +12,9 @@ export class Student {
   @Column()
   email: string;
 
+  @Column()
+  enrollmentNumber: string;
+
   @ManyToOne(() => Department, (department) => department.teachers)
   department: Department;
 }

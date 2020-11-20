@@ -3,9 +3,14 @@ import { SecretariatsService } from './secretariats.service';
 import { SecretariatsController } from './secretariats.controller';
 import { Secretariat } from './entities/secretariat.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { DepartmentsModule } from 'src/departments/departments.module';
+import { Department } from 'src/departments/entities/department.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Secretariat])],
+  imports: [
+    TypeOrmModule.forFeature([Secretariat, Department]),
+    DepartmentsModule,
+  ],
   controllers: [SecretariatsController],
   providers: [SecretariatsService],
 })

@@ -1,6 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { DepartmentsService } from 'src/departments/departments.service';
+import { Department } from 'src/departments/entities/department.entity';
 import { Repository } from 'typeorm';
 import { CreateStudentDto } from './dto/create-student.dto';
 import { UpdateStudentDto } from './dto/update-student.dto';
@@ -9,16 +10,23 @@ import { Student } from './entities/student.entity';
 @Injectable()
 export class StudentsService {
   constructor(
+    @InjectRepository(Department)
+    private readonly departmentRepository: Repository<Department>,
+
     @InjectRepository(Student)
     private readonly studentRepository: Repository<Student>,
-
-    private readonly departmentService: DepartmentsService,
   ) {}
 
   async create(createStudentDto: CreateStudentDto) {
-    const departmentExist = await this.departmentService.findOne(
-      createStudentDto.departmentId,
+    const { departmentId } = createStudentDto;
+
+    const departmentExist = await this.departmentRepository.findOne(
+      departmentId,
     );
+
+    if (!departmentExist) {
+      throw new NotFoundException(`Department #${departmentId} not found`);
+    }
 
     const student = this.studentRepository.create(createStudentDto);
 

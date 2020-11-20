@@ -15,4 +15,13 @@ describe('SecretariatsService', () => {
   it('should be defined', () => {
     expect(service).toBeDefined();
   });
+
+  describe('create', () => {
+    it('should not be able to create more than one secretariat of graduation in a department', () => {
+      // const secretariatSpy = jest.spyOn(service, 'create').mockResolvedValue({
+      //   id: '1',
+      // });
+      // const secretariat = service.create;
+    });
+  });
 });
