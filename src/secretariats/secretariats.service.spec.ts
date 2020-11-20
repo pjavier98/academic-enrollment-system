@@ -1,7 +1,7 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { getRepositoryToken } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { Secretariat, SecretariatType } from './entities/secretariat.entity';
+import { Secretariat } from './entities/secretariat.entity';
 import { SecretariatsService } from './secretariats.service';
 import { Department } from '../departments/entities/department.entity';
 import { HttpException, NotFoundException } from '@nestjs/common';
@@ -10,6 +10,7 @@ type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 const createMockRepository = <T = any>(): MockRepository<T> => ({
   findOne: jest.fn(),
   create: jest.fn(),
+  save: jest.fn(),
 });
 
 const secretariatsMocks = {
@@ -18,7 +19,8 @@ const secretariatsMocks = {
 };
 
 const departementsMocks = {
-  valid: require('../../test/mocks/departments/valid.json'),
+  withBothSecretariatsValid: require('../../test/mocks/departments/with-both-secretariats-valid.json'),
+  withoutSecretariatsValid: require('../../test/mocks/departments/without-secretariats-valid.json'),
 };
 
 describe('SecretariatsService', () => {
@@ -59,12 +61,14 @@ describe('SecretariatsService', () => {
     expect(departmentRepository).toBeDefined();
   });
 
+  // describe('findOne', () => {
+  //   it
+  // })
+
   describe('create', () => {
     it('should not be able to create a secretariat in a non-existent department', async () => {
       try {
-        jest
-          .spyOn(departmentRepository, 'findOne')
-          .mockResolvedValue(undefined);
+        jest.spyOn(departmentRepository, 'findOne').mockReturnValue(undefined);
 
         await secretariatService.create(secretariatsMocks.graduationValid);
       } catch (error) {
@@ -72,11 +76,36 @@ describe('SecretariatsService', () => {
       }
     });
 
+    it('should be able to create just one secretariat of graduation in a department', async () => {
+      jest
+        .spyOn(departmentRepository, 'findOne')
+        .mockReturnValue(departementsMocks.withoutSecretariatsValid);
+
+      jest.spyOn(secretariatRepository, 'create').mockReturnValue({
+        ...secretariatsMocks.graduationValid,
+        departament: departementsMocks.withoutSecretariatsValid.id,
+      });
+
+      jest.spyOn(secretariatRepository, 'save').mockReturnValue({
+        ...secretariatsMocks.graduationValid,
+        departament: departementsMocks.withoutSecretariatsValid.id,
+      });
+
+      const secretariat = await secretariatService.create(
+        secretariatsMocks.graduationValid,
+      );
+
+      expect(secretariat).toEqual({
+        ...secretariatsMocks.graduationValid,
+        departament: departementsMocks.withoutSecretariatsValid.id,
+      });
+    });
+
     it('should not be able to create more than one secretariat of graduation in a department', async () => {
       try {
         jest
           .spyOn(departmentRepository, 'findOne')
-          .mockResolvedValue(departementsMocks.valid);
+          .mockReturnValue(departementsMocks.withBothSecretariatsValid);
 
         await secretariatService.create(secretariatsMocks.graduationValid);
       } catch (error) {
@@ -88,7 +117,7 @@ describe('SecretariatsService', () => {
       try {
         jest
           .spyOn(departmentRepository, 'findOne')
-          .mockResolvedValue(departementsMocks.valid);
+          .mockReturnValue(departementsMocks.withBothSecretariatsValid);
 
         await secretariatService.create(secretariatsMocks.posGraduationValid);
       } catch (error) {
