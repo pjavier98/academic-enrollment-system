@@ -1,7 +1,7 @@
-import { Secretariat } from 'src/secretariats/entities/secretariat.entity';
-import { Student } from 'src/students/entities/student.entity';
-import { Teacher } from 'src/teachers/entities/teacher.entity';
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import { Secretariat } from '../../secretariats/entities/secretariat.entity';
+import { Student } from '../../students/entities/student.entity';
+import { Teacher } from '../../teachers/entities/teacher.entity';
 
 @Entity('departments')
 export class Department {

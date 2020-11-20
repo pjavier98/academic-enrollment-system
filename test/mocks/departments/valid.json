@@ -1,0 +1,14 @@
+{
+    "id": 1,
+    "name": "IC",
+    "secretariats": [
+        {
+            "id": "1",
+            "type": "graduation"
+          },
+      {
+        "id": "2",
+        "type": "pos_graduation"
+      }
+    ]
+}

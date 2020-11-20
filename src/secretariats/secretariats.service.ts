@@ -1,10 +1,15 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  NotFoundException,
+  HttpStatus,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateSecretariatDto } from './dto/create-secretariat.dto';
 import { UpdateSecretariatDto } from './dto/update-secretariat.dto';
-import { Secretariat } from './entities/secretariat.entity';
-import { Department } from 'src/departments/entities/department.entity';
+import { Secretariat, SecretariatType } from './entities/secretariat.entity';
+import { Department } from '../departments/entities/department.entity';
 
 @Injectable()
 export class SecretariatsService {
@@ -21,10 +26,24 @@ export class SecretariatsService {
 
     const departmentExist = await this.departmentRepository.findOne(
       departmentId,
+      {
+        relations: ['secretariats'],
+      },
     );
 
     if (!departmentExist) {
       throw new NotFoundException(`Department #${departmentId} not found`);
+    }
+
+    const existSameSecretariatType = departmentExist.secretariats.find(
+      (secretariat) => secretariat.type === createSecretariatDto.type,
+    );
+
+    if (existSameSecretariatType) {
+      throw new HttpException(
+        'Already has a secretariat of that type for this department',
+        HttpStatus.CONFLICT,
+      );
     }
 
     const secretariat = this.secretariatRepository.create(createSecretariatDto);

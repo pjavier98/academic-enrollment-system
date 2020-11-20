@@ -1,4 +1,4 @@
-import { Department } from 'src/departments/entities/department.entity';
+import { Department } from '../../departments/entities/department.entity';
 import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 
 export enum SecretariatType {
