@@ -14,7 +14,7 @@ export class Department {
   @OneToMany(() => Secretariat, (secretariat) => secretariat.departments)
   secretariats: Secretariat[];
 
-  @OneToMany(() => Teacher, (teachers) => teachers.departaments)
+  @OneToMany(() => Teacher, (teachers) => teachers.departament)
   teachers: Teacher[];
 
   @OneToMany(() => Student, (students) => students.departaments)

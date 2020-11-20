@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateDepartmentDto } from './dto/create-department.dto';
@@ -13,7 +13,9 @@ export class DepartmentsService {
   ) {}
 
   create(createDepartmentDto: CreateDepartmentDto) {
-    return 'This action adds a new department';
+    const department = this.departmentRepository.create(createDepartmentDto);
+
+    return this.departmentRepository.save(department);
   }
 
   async findAll() {
@@ -24,8 +26,14 @@ export class DepartmentsService {
     return departments;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} department`;
+  async findOne(id: string) {
+    const department = await this.departmentRepository.findOne(id);
+
+    if (!department) {
+      throw new NotFoundException(`Department #${id} not found`);
+    }
+
+    return department;
   }
 
   update(id: number, updateDepartmentDto: UpdateDepartmentDto) {

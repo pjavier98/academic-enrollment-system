@@ -27,7 +27,7 @@ export class DepartmentsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.departmentsService.findOne(+id);
+    return this.departmentsService.findOne(id);
   }
 
   @Put(':id')
