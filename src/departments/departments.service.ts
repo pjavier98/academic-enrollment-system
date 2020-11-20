@@ -20,14 +20,16 @@ export class DepartmentsService {
 
   async findAll() {
     const departments = await this.departmentRepository.find({
-      relations: ['secretariats', 'teachers'],
+      relations: ['secretariats', 'teachers', 'students'],
     });
 
     return departments;
   }
 
   async findOne(id: string) {
-    const department = await this.departmentRepository.findOne(id);
+    const department = await this.departmentRepository.findOne(id, {
+      relations: ['secretariats', 'teachers', 'students'],
+    });
 
     if (!department) {
       throw new NotFoundException(`Department #${id} not found`);

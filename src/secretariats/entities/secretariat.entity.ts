@@ -15,5 +15,5 @@ export class Secretariat {
   type: SecretariatType;
 
   @ManyToOne(() => Department, (department) => department.secretariats)
-  departments: Department[];
+  department: Department;
 }

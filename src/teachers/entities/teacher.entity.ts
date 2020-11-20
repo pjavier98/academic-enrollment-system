@@ -13,5 +13,5 @@ export class Teacher {
   email: string;
 
   @ManyToOne(() => Department, (department) => department.teachers)
-  departament: Department;
+  department: Department;
 }

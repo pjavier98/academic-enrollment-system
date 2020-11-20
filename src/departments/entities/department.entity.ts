@@ -11,12 +11,12 @@ export class Department {
   @Column()
   name: string;
 
-  @OneToMany(() => Secretariat, (secretariat) => secretariat.departments)
+  @OneToMany(() => Secretariat, (secretariat) => secretariat.department)
   secretariats: Secretariat[];
 
-  @OneToMany(() => Teacher, (teachers) => teachers.departament)
+  @OneToMany(() => Teacher, (teachers) => teachers.department)
   teachers: Teacher[];
 
-  @OneToMany(() => Student, (students) => students.departaments)
+  @OneToMany(() => Student, (students) => students.department)
   students: Student[];
 }
