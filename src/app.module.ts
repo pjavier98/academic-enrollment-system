@@ -7,6 +7,7 @@ import { SecretariatsModule } from './secretariats/secretariats.module';
 import { TeachersModule } from './teachers/teachers.module';
 import { StudentsModule } from './students/students.module';
 import { SubjectsModule } from './subjects/subjects.module';
+import { EnrolledSubjectsModule } from './enrolled-subjects/enrolled-subjects.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { SubjectsModule } from './subjects/subjects.module';
     TeachersModule,
     StudentsModule,
     SubjectsModule,
+    EnrolledSubjectsModule,
   ],
   controllers: [AppController],
   providers: [AppService],
