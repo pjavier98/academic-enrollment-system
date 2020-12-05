@@ -13,7 +13,7 @@ O aluno não pode se matrícular em matérias que ele já tenha cursado e passad
 A matrícula so deve ser concretizada se o aluno já pagou as matérias de pre-requisito
 
 ## Use Case 05
-O aluno de graduação pode se matricular em materias de graduação somente se tiver completado
+O aluno de graduação pode se matricular em materias de pos-graduação somente se tiver completado
 pelo menos 170 créditos
 
 ## Use Case 06

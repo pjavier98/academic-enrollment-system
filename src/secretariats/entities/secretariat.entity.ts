@@ -1,5 +1,12 @@
 import { Department } from '../../departments/entities/department.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
+import { Subject } from '../../subjects/entities/subject.entity';
 
 export enum SecretariatType {
   GRADUATION = 'graduation',
@@ -16,4 +23,7 @@ export class Secretariat {
 
   @ManyToOne(() => Department, (department) => department.secretariats)
   department: Department;
+
+  @OneToMany(() => Subject, (subjects) => subjects.secretariat)
+  subjects: Subject[];
 }
