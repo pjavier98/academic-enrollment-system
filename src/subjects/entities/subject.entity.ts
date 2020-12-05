@@ -1,3 +1,4 @@
+import { EnrolledSubject } from 'src/enrolled-subjects/entities/enrolled-subject.entity';
 import { Student } from 'src/students/entities/student.entity';
 import {
   Column,
@@ -43,4 +44,10 @@ export class Subject {
     nullable: true,
   })
   subjects: Subject[];
+
+  @OneToMany(
+    () => EnrolledSubject,
+    (enrolledSubject) => enrolledSubject.subject,
+  )
+  enrolledSubjects: EnrolledSubject[];
 }

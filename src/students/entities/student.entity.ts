@@ -1,4 +1,11 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { EnrolledSubject } from 'src/enrolled-subjects/entities/enrolled-subject.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Department } from '../../departments/entities/department.entity';
 
 @Entity('students')
@@ -17,4 +24,10 @@ export class Student {
 
   @ManyToOne(() => Department, (department) => department.teachers)
   department: Department;
+
+  @OneToMany(
+    () => EnrolledSubject,
+    (enrolledSubjects) => enrolledSubjects.student,
+  )
+  enrolledSubjects: EnrolledSubject[];
 }

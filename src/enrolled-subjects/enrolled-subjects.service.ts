@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { CreateEnrolledSubjectDto } from './dto/create-enrolled-subject.dto';
+import { UpdateEnrolledSubjectGradeDto } from './dto/update-enrolled-subject-grade.dto';
 import { UpdateEnrolledSubjectDto } from './dto/update-enrolled-subject.dto';
 
 @Injectable()
@@ -14,6 +15,13 @@ export class EnrolledSubjectsService {
 
   findOne(id: number) {
     return `This action returns a #${id} enrolledSubject`;
+  }
+
+  updateGrade(
+    id: number,
+    updateEnrolledSubjectGradeDto: UpdateEnrolledSubjectGradeDto,
+  ) {
+    return `This action updates the grade #${id} enrolledSubject`;
   }
 
   update(id: number, updateEnrolledSubjectDto: UpdateEnrolledSubjectDto) {
