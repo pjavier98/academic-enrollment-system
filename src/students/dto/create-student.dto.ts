@@ -1,10 +1,11 @@
-import { IsISSN, IsString } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
 
 export class CreateStudentDto {
   @IsString()
   readonly name: string;
 
   @IsString()
+  @IsEmail()
   readonly email: string;
 
   @IsString()

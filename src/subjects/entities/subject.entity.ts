@@ -1,11 +1,15 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Student } from 'src/students/entities/student.entity';
+import {
+  Column,
+  Entity,
+  ManyToMany,
+  ManyToOne,
+  OneToMany,
+  OneToOne,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 import { Secretariat } from '../../secretariats/entities/secretariat.entity';
 import { Teacher } from '../../teachers/entities/teacher.entity';
-
-export enum PreRequisiteSubjects {
-  GRADUATION = 'graduation',
-  POS_GRADUATION = 'pos_graduation',
-}
 
 @Entity('subjects')
 export class Subject {
@@ -24,12 +28,19 @@ export class Subject {
   @Column()
   minimum_credits_number_to_attend: number;
 
-  @Column({ type: 'enum', enum: PreRequisiteSubjects })
-  type: PreRequisiteSubjects;
-
   @ManyToOne(() => Secretariat, (secretariat) => secretariat.subjects)
   secretariat: Secretariat;
 
   @ManyToOne(() => Teacher, (teacher) => teacher.subjects)
   teacher: Teacher;
+
+  @ManyToOne(() => Subject, (subject) => subject.subject, {
+    nullable: true,
+  })
+  subject: Subject;
+
+  @OneToMany(() => Subject, (subject) => subject.subjects, {
+    nullable: true,
+  })
+  subjects: Subject[];
 }
