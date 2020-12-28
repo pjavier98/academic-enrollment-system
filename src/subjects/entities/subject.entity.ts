@@ -1,12 +1,9 @@
-import { EnrolledSubject } from 'src/enrolled-subjects/entities/enrolled-subject.entity';
-import { Student } from 'src/students/entities/student.entity';
+import { EnrolledSubject } from '../../enrolled-subjects/entities/enrolled-subject.entity';
 import {
   Column,
   Entity,
-  ManyToMany,
   ManyToOne,
   OneToMany,
-  OneToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Secretariat } from '../../secretariats/entities/secretariat.entity';

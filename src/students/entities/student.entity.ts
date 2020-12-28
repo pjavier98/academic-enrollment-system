@@ -1,4 +1,4 @@
-import { EnrolledSubject } from 'src/enrolled-subjects/entities/enrolled-subject.entity';
+import { EnrolledSubject } from '../../enrolled-subjects/entities/enrolled-subject.entity';
 import {
   Column,
   Entity,

@@ -8,7 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateSecretariatDto } from './dto/create-secretariat.dto';
 import { UpdateSecretariatDto } from './dto/update-secretariat.dto';
-import { Secretariat, SecretariatType } from './entities/secretariat.entity';
+import { Secretariat } from './entities/secretariat.entity';
 import { Department } from '../departments/entities/department.entity';
 
 @Injectable()

@@ -1,7 +1,7 @@
 # Use Cases:
 
 ## Use Case 01
-O aluno só pode se matricular em disciplinar do departamento ao qual seu curso pertence
+O aluno só pode se matricular em matéria do departamento ao qual seu curso pertence
 
 #### Precisaremos criar 2 departamentos:
 * Departamento => IC => Instituto de Computação

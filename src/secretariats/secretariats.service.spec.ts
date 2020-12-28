@@ -61,10 +61,6 @@ describe('SecretariatsService', () => {
     expect(departmentRepository).toBeDefined();
   });
 
-  // describe('findOne', () => {
-  //   it
-  // })
-
   describe('create', () => {
     it('should not be able to create a secretariat in a non-existent department', async () => {
       try {

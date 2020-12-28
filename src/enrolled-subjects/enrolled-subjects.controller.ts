@@ -30,7 +30,7 @@ export class EnrolledSubjectsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.enrolledSubjectsService.findOne(+id);
+    return this.enrolledSubjectsService.findOne(id);
   }
 
   @Put(':id/update-grade')
@@ -39,7 +39,7 @@ export class EnrolledSubjectsController {
     @Body() updateEnrolledSubjectGradeDto: UpdateEnrolledSubjectGradeDto,
   ) {
     return this.enrolledSubjectsService.updateGrade(
-      +id,
+      id,
       updateEnrolledSubjectGradeDto,
     );
   }
@@ -49,11 +49,11 @@ export class EnrolledSubjectsController {
     @Param('id') id: string,
     @Body() updateEnrolledSubjectDto: UpdateEnrolledSubjectDto,
   ) {
-    return this.enrolledSubjectsService.update(+id, updateEnrolledSubjectDto);
+    return this.enrolledSubjectsService.update(id, updateEnrolledSubjectDto);
   }
 
   @Delete(':id')
   remove(@Param('id') id: string) {
-    return this.enrolledSubjectsService.remove(+id);
+    return this.enrolledSubjectsService.remove(id);
   }
 }

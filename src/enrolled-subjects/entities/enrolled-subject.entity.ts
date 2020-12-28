@@ -7,10 +7,10 @@ export class EnrolledSubject {
   @PrimaryGeneratedColumn()
   id: string;
 
-  @Column('float')
+  @Column('float', { nullable: true })
   grade: number;
 
-  @Column()
+  @Column({ default: false })
   isAapproved: boolean;
 
   @ManyToOne(() => Subject, (subject) => subject.enrolledSubjects)
