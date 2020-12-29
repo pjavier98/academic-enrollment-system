@@ -62,7 +62,7 @@ export class SubjectsService {
     subject.teacher = teacherExist;
 
     if (subjectId) {
-      subject.subject = subjectExist;
+      subject.prequisiteSubject = subjectExist;
     }
 
     return this.subjectRepository.save(subject);

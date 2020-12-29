@@ -32,10 +32,10 @@ export class Subject {
   @ManyToOne(() => Teacher, (teacher) => teacher.subjects)
   teacher: Teacher;
 
-  @ManyToOne(() => Subject, (subject) => subject.subject, {
+  @ManyToOne(() => Subject, (subject) => subject.prequisiteSubject, {
     nullable: true,
   })
-  subject: Subject;
+  prequisiteSubject: Subject;
 
   @OneToMany(() => Subject, (subject) => subject.subjects, {
     nullable: true,

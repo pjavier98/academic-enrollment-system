@@ -11,7 +11,7 @@ export class EnrolledSubject {
   grade: number;
 
   @Column({ default: false })
-  isAapproved: boolean;
+  isApproved: boolean;
 
   @ManyToOne(() => Subject, (subject) => subject.enrolledSubjects)
   subject: Subject;

@@ -1,4 +1,5 @@
-import { IsEmail, IsString } from 'class-validator';
+import { IsEmail, IsString, IsEnum } from 'class-validator';
+import { StudentType } from '../entities/student.entity';
 
 export class CreateStudentDto {
   @IsString()
@@ -13,4 +14,7 @@ export class CreateStudentDto {
 
   @IsString()
   readonly enrollmentNumber: string;
+
+  @IsEnum(StudentType)
+  type: StudentType;
 }

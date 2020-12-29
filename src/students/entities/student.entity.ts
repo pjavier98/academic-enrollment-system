@@ -8,6 +8,11 @@ import {
 } from 'typeorm';
 import { Department } from '../../departments/entities/department.entity';
 
+export enum StudentType {
+  GRADUATION = 'graduation',
+  POS_GRADUATION = 'pos_graduation',
+}
+
 @Entity('students')
 export class Student {
   @PrimaryGeneratedColumn()
@@ -21,6 +26,9 @@ export class Student {
 
   @Column()
   enrollmentNumber: string;
+
+  @Column({ type: 'enum', enum: StudentType })
+  type: StudentType;
 
   @ManyToOne(() => Department, (department) => department.teachers)
   department: Department;
