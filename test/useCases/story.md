@@ -12,7 +12,7 @@ O aluno só pode se matricular em matéria do departamento ao qual seu curso per
 ## Use Case 02
 A matrícula so deve ser concretizada se o aluno cumpriu o número de crédito mínimo
 
-#### Tentar cadastrar um aluno tipo P2 sem ter pago P1
+#### Tentar cadastrar um aluno tipo Programação 2 sem ter pago Programação 1
 
 ## Use Case 03
 O aluno não pode se matrícular em matérias que ele já tenha cursado e passado

@@ -2,6 +2,8 @@ import { EnrolledSubject } from '../../enrolled-subjects/entities/enrolled-subje
 import {
   Column,
   Entity,
+  JoinTable,
+  ManyToMany,
   ManyToOne,
   OneToMany,
   PrimaryGeneratedColumn,
@@ -32,19 +34,18 @@ export class Subject {
   @ManyToOne(() => Teacher, (teacher) => teacher.subjects)
   teacher: Teacher;
 
-  @ManyToOne(() => Subject, (subject) => subject.prequisiteSubject, {
-    nullable: true,
-  })
-  prequisiteSubject: Subject;
-
-  @OneToMany(() => Subject, (subject) => subject.subjects, {
-    nullable: true,
-  })
-  subjects: Subject[];
-
   @OneToMany(
     () => EnrolledSubject,
     (enrolledSubject) => enrolledSubject.subject,
   )
   enrolledSubjects: EnrolledSubject[];
+
+  @ManyToMany(() => Subject, (subject) => subject.prerequisites, {
+    nullable: true,
+    cascade: ['insert', 'update'],
+    onUpdate: 'CASCADE',
+    onDelete: 'SET NULL',
+  })
+  @JoinTable()
+  prerequisites: Subject[];
 }

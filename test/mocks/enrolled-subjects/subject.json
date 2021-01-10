@@ -1,0 +1,21 @@
+{
+    "name": "Programação 2",
+    "code": "COMP-002",
+    "credits_number": 60,
+    "minimum_credits_number_to_attend": 60,
+    "secretariat": {
+        "type": "graduation",
+        "department": {
+            "name": "IC"
+        }
+    },
+    "prerequisites": [
+        {
+        "id": 32,
+        "name": "Programação 1",
+        "code": "COMP-001",
+        "credits_number": 60,
+        "minimum_credits_number_to_attend": 0
+        }
+    ]
+}

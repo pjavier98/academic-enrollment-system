@@ -12,7 +12,7 @@ import { UpdateEnrolledSubjectGradeDto } from './dto/update-enrolled-subject-gra
 import { UpdateEnrolledSubjectDto } from './dto/update-enrolled-subject.dto';
 import { EnrolledSubjectRepository } from './enrolled-subjects.repository';
 import { EnrolledSubject } from './entities/enrolled-subject.entity';
-import { ENOUGH_CREDITS_TO_ENROLL_POS_GRADUATION_SUBJECT_FOR_GRADUATION_STUDENT } from 'src/constants/enoughCreditsToEnrollPosGraduationSubjectForGraduationStudent';
+import { ENOUGH_CREDITS_TO_ENROLL_POS_GRADUATION_SUBJECT_FOR_GRADUATION_STUDENT } from '../constants/enoughCreditsToEnrollPosGraduationSubjectForGraduationStudent';
 
 @Injectable()
 export class EnrolledSubjectsService {
@@ -27,138 +27,153 @@ export class EnrolledSubjectsService {
     private readonly enrolledSubjectRepository: EnrolledSubjectRepository,
   ) {}
 
-  async canStudentBeEnrolledInTheSubject(subject: Subject, student: Student) {
-    const enrolledStudentInADifferentDepartmentThatHisCourse = () => {
-      const subjectDepartment = subject.secretariat.department;
-      const studentDepartment = student.department;
+  enrolledStudentInADifferentDepartmentThatHisCourse = (
+    student: Student,
+    subject: Subject,
+  ) => {
+    const subjectDepartment = subject.secretariat.department;
+    const studentDepartment = student.department;
 
-      const isSameDepartment =
-        subjectDepartment.name === studentDepartment.name &&
-        subjectDepartment.id === studentDepartment.id;
+    const isSameDepartment = subjectDepartment.name === studentDepartment.name;
 
-      if (!isSameDepartment) {
+    if (!isSameDepartment) {
+      throw new BadRequestException(
+        'Não foi possível matricular o aluno',
+        `O/a aluno/a pertence ao departamento ${studentDepartment.name} e a matéria ao departamento ${subjectDepartment.name}`,
+      );
+    }
+  };
+
+  enrolledStudentInASubjectWithInsufficientCredits = async (
+    student: Student,
+    subject: Subject,
+  ) => {
+    const studentCredits = await this.enrolledSubjectRepository.findStudentCredits(
+      student.id,
+    );
+
+    const hasEnoughCreditsToEnrollTheSubject =
+      studentCredits >= subject.minimum_credits_number_to_attend;
+
+    if (!hasEnoughCreditsToEnrollTheSubject) {
+      throw new BadRequestException(
+        'Não foi possível matricular o aluno',
+        `O/a aluno/a ${student.name} não possui créditos suficientes para cursar a matéria ${subject.name}`,
+      );
+    }
+  };
+
+  enrolledStudentInASubjectWithoutItsPrerequisites = async (
+    student: Student,
+    subject: Subject,
+  ) => {
+    const { prerequisites } = subject;
+
+    const hasPrerequisites = prerequisites.length > 0;
+    const prerequisitesIds = prerequisites.map(
+      (prerequisite) => prerequisite.id,
+    );
+
+    let enrolledSubjects: EnrolledSubject[];
+
+    if (hasPrerequisites) {
+      enrolledSubjects = await this.enrolledSubjectRepository.findSubjectPrerequisites(
+        student.id,
+        prerequisitesIds,
+      );
+
+      const subjectPrerequisitesIds = enrolledSubjects.map(
+        (subjectPrerequisite) => subjectPrerequisite.subject.id,
+      );
+
+      const prerequisitesNotEnrolled = prerequisites
+        .filter(
+          (prerequisite) => !subjectPrerequisitesIds.includes(prerequisite.id),
+        )
+        .map((prerequisite) => prerequisite.name)
+        .join(', ');
+
+      const passedInAllPrerequisites =
+        subject.prerequisites.length === enrolledSubjects.length;
+
+      if (!passedInAllPrerequisites) {
         throw new BadRequestException(
           'Não foi possível matricular o aluno',
-          `O aluno/a pertence ao departamento ${studentDepartment.name} e a matéria ao departamento ${subjectDepartment.name}`,
+          `O/a aluno/a ${student.name} não pagou todos o/s pre-requisitos [${prerequisitesNotEnrolled}] para cursar a matéria ${subject.name}`,
         );
       }
-    };
+    }
+  };
 
-    const enrolledStudentInASubjectWithInsufficientCredits = async () => {
-      // get the credits of the subjects the student already passed
+  enrolledStudentInASubjectHeAlreadyPassed = async (
+    student: Student,
+    subject: Subject,
+  ) => {
+    const subjectAlreadyPassed = await this.enrolledSubjectRepository.findOne(
+      subject.id,
+      {
+        where: {
+          isApproved: true,
+        },
+      },
+    );
+
+    const alreadyPassedInSubject = !!subjectAlreadyPassed;
+
+    if (alreadyPassedInSubject) {
+      throw new BadRequestException(
+        'Não foi possível matricular o aluno',
+        `O/a aluno/a ${student.name} já cursou ${subject.name} e passou na matéria`,
+      );
+    }
+  };
+
+  enrolledGraduationStudentInPosGraduationSubjectWithInsufficientCredits = async (
+    student: Student,
+    subject: Subject,
+  ) => {
+    const isGraduationStudent = student.type === 'graduation';
+    const isPosGraduationSubject =
+      subject.secretariat.type === 'pos_graduation';
+
+    if (isGraduationStudent && isPosGraduationSubject) {
       const studentCredits = await this.enrolledSubjectRepository.findStudentCredits(
         student.id,
       );
 
       const hasEnoughCreditsToEnrollTheSubject =
-        studentCredits >= subject.minimum_credits_number_to_attend;
+        studentCredits >=
+        ENOUGH_CREDITS_TO_ENROLL_POS_GRADUATION_SUBJECT_FOR_GRADUATION_STUDENT;
 
       if (!hasEnoughCreditsToEnrollTheSubject) {
         throw new BadRequestException(
           'Não foi possível matricular o aluno',
-          `O aluno/a ${student.name} não possui créditos suficientes para cursar a matéria ${subject.name}`,
+          `O/a aluno/a ${student.name} precisa de pelo menos 170 créditos para cursar a matéria de pos-graduação ${subject.name}`,
         );
       }
-    };
+    }
+  };
 
-    const enrolledStudentInASubjectWithoutItsPrerequisites = async () => {
-      const hasPrerequisites = !!subject.prequisiteSubject;
+  enrolledPosGraduationStudentInGraduationSubject = (
+    student: Student,
+    subject: Subject,
+  ) => {
+    const isPosGraduationStudent = student.type === 'pos_graduation';
+    const isGraduationSubject = subject.secretariat.type === 'graduation';
 
-      console.log(subject.prequisiteSubject);
-
-      let prerequisiteSubject: EnrolledSubject;
-
-      if (hasPrerequisites) {
-        prerequisiteSubject = await this.enrolledSubjectRepository.findSubjectPrerequisites(
-          student.id,
-          subject.prequisiteSubject.id,
-        );
-      }
-
-      const passedInThePrequisitesSubject = prerequisiteSubject?.isApproved;
-
-      if (!passedInThePrequisitesSubject) {
-        throw new BadRequestException(
-          'Não foi possível matricular o aluno',
-          `O aluno/a ${student.name} não pagou o pre-requisito ${subject.prequisiteSubject.name} para cursar a matéria ${subject.name}`,
-        );
-      }
-    };
-
-    const enrolledStudentInASubjectHeAlreadyPassed = () => {
-      const subjectAlreadyPassed = this.enrolledSubjectRepository.findOne(
-        subject.id,
-        {
-          where: {
-            isApproved: true,
-          },
-        },
+    if (isPosGraduationStudent && isGraduationSubject) {
+      throw new BadRequestException(
+        'Não foi possível matricular o aluno',
+        `O aluno/a ${student.name} de pos-graduação não pode se matricular em matérias de graduação`,
       );
-
-      if (subjectAlreadyPassed) {
-        throw new BadRequestException(
-          'Não foi possível matricular o aluno',
-          `O aluno/a ${student.name} já cursou e passou na matéria ${subject.name}`,
-        );
-      }
-    };
-
-    const enrolledGraduationStudentInPosGraduationSubjectWithInsufficientCredits = async () => {
-      const isGraduationStudent = student.type === 'graduation';
-      const isPosGraduationSubject =
-        subject.secretariat.type === 'pos_graduation';
-
-      if (isGraduationStudent && isPosGraduationSubject) {
-        const studentCredits = await this.enrolledSubjectRepository.findStudentCredits(
-          student.id,
-        );
-
-        const hasEnoughCreditsToEnrollTheSubject =
-          studentCredits >=
-          ENOUGH_CREDITS_TO_ENROLL_POS_GRADUATION_SUBJECT_FOR_GRADUATION_STUDENT;
-
-        if (!hasEnoughCreditsToEnrollTheSubject) {
-          throw new BadRequestException(
-            'Não foi possível matricular o aluno',
-            `O aluno/a ${student.name} precisa de pelo menos 170 créditos para cursar a matéria de pos-graduação ${subject.name}`,
-          );
-        }
-      }
-    };
-
-    const enrolledPosGraduationStudentInGraduationSubject = () => {
-      const isPosGraduationStudent = student.type === 'pos_graduation';
-      const isGraduationSubject = subject.secretariat.type === 'graduation';
-
-      if (isPosGraduationStudent && isGraduationSubject) {
-        throw new BadRequestException(
-          'Não foi possível matricular o aluno',
-          `O aluno/a ${student.name} de pos-graduação não pode se matricular em matérias de graduação`,
-        );
-      }
-    };
-
-    await Promise.all([
-      // O aluno só pode se matricular em matéria do departamento ao qual seu curso pertence
-      enrolledStudentInADifferentDepartmentThatHisCourse(),
-      // A matrícula so deve ser concretizada se o aluno cumpriu o número de crédito mínimo
-      enrolledStudentInASubjectWithInsufficientCredits(),
-      // A matrícula so deve ser concretizada se o aluno já pagou as matérias de pre-requisito
-      enrolledStudentInASubjectWithoutItsPrerequisites(),
-      // O aluno não pode se matrícular em matérias que ele já tenha cursado e passado
-      enrolledStudentInASubjectHeAlreadyPassed(),
-      // O aluno de graduação pode se matricular em materias de pos-graduação somente se tiver completado pelo menos 170 créditos
-      enrolledGraduationStudentInPosGraduationSubjectWithInsufficientCredits(),
-      // Os alunos de pós-graduação não podem cursar disciplinas de graduação
-      enrolledPosGraduationStudentInGraduationSubject(),
-    ]);
-  }
+    }
+  };
 
   async create(createEnrolledSubjectDto: CreateEnrolledSubjectDto) {
     const { subjectId, studentId } = createEnrolledSubjectDto;
 
     const subjectExist = await this.subjectRepository.findOne(subjectId, {
-      relations: ['secretariat', 'secretariat.department', 'prequisiteSubject'],
+      relations: ['secretariat', 'secretariat.department', 'prerequisites'],
     });
 
     if (!subjectExist) {
@@ -173,7 +188,35 @@ export class EnrolledSubjectsService {
       throw new NotFoundException(`Student #${studentId} not found`);
     }
 
-    await this.canStudentBeEnrolledInTheSubject(subjectExist, studentExist);
+    await Promise.all([
+      // O aluno só pode se matricular em matéria do departamento ao qual seu curso pertence
+      this.enrolledStudentInADifferentDepartmentThatHisCourse(
+        studentExist,
+        subjectExist,
+      ),
+      // A matrícula so deve ser concretizada se o aluno cumpriu o número de crédito mínimo
+      this.enrolledStudentInASubjectWithInsufficientCredits(
+        studentExist,
+        subjectExist,
+      ),
+      // A matrícula so deve ser concretizada se o aluno já pagou as matérias de pre-requisito
+      this.enrolledStudentInASubjectWithoutItsPrerequisites(
+        studentExist,
+        subjectExist,
+      ),
+      // O aluno não pode se matrícular em matérias que ele já tenha cursado e passado
+      this.enrolledStudentInASubjectHeAlreadyPassed(studentExist, subjectExist),
+      // O aluno de graduação pode se matricular em materias de pos-graduação somente se tiver completado pelo menos 170 créditos
+      this.enrolledGraduationStudentInPosGraduationSubjectWithInsufficientCredits(
+        studentExist,
+        subjectExist,
+      ),
+      // Os alunos de pós-graduação não podem cursar disciplinas de graduação
+      this.enrolledPosGraduationStudentInGraduationSubject(
+        studentExist,
+        subjectExist,
+      ),
+    ]);
 
     const enrolledSubject = this.enrolledSubjectRepository.create({
       ...createEnrolledSubjectDto,
@@ -196,11 +239,26 @@ export class EnrolledSubjectsService {
     }
   }
 
-  updateGrade(
+  async updateGrade(
     id: string,
     updateEnrolledSubjectGradeDto: UpdateEnrolledSubjectGradeDto,
   ) {
-    return `This action updates the grade #${id} enrolledSubject`;
+    const { grade } = updateEnrolledSubjectGradeDto;
+
+    let isApproved = false;
+
+    if (grade >= 7) {
+      isApproved = true;
+    }
+
+    await this.enrolledSubjectRepository.update(id, {
+      ...updateEnrolledSubjectGradeDto,
+      isApproved,
+    });
+
+    return this.enrolledSubjectRepository.findOne(id, {
+      relations: ['student', 'subject'],
+    });
   }
 
   update(id: string, updateEnrolledSubjectDto: UpdateEnrolledSubjectDto) {

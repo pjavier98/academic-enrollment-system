@@ -1,4 +1,4 @@
-import { IsNumber, IsOptional, IsString } from 'class-validator';
+import { IsArray, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateSubjectDto {
   @IsString()
@@ -19,7 +19,7 @@ export class CreateSubjectDto {
   @IsString()
   readonly teacherId: string;
 
-  @IsString()
+  @IsArray()
   @IsOptional()
-  readonly subjectId: string;
+  readonly subjectIds: string[];
 }

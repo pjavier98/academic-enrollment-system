@@ -1,5 +1,5 @@
 import { EnrolledSubject } from './entities/enrolled-subject.entity';
-import { EntityRepository, Repository } from 'typeorm';
+import { EntityRepository, In, Repository } from 'typeorm';
 import { NotFoundException } from '@nestjs/common';
 
 @EntityRepository(EnrolledSubject)
@@ -35,18 +35,18 @@ export class EnrolledSubjectRepository extends Repository<EnrolledSubject> {
 
   async findSubjectPrerequisites(
     studentId: string,
-    subjectId: string,
-  ): Promise<EnrolledSubject> {
-    const prerequisiteSubject = await this.findOne({
-      relations: ['subject', 'student'],
+    subjectIds: string[],
+  ): Promise<EnrolledSubject[]> {
+    console.log({ studentId }, { subjectIds });
+
+    const subjectPrerequisites = await this.find({
+      relations: ['subject'],
       where: {
         student: studentId,
-        subject: subjectId,
+        subject: In(subjectIds),
       },
     });
 
-    console.log(prerequisiteSubject);
-
-    return prerequisiteSubject;
+    return subjectPrerequisites;
   }
 }

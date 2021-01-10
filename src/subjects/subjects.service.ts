@@ -21,7 +21,7 @@ export class SubjectsService {
   ) {}
 
   async create(createSubjectDto: CreateSubjectDto) {
-    const { secretariatId, teacherId, subjectId, code } = createSubjectDto;
+    const { secretariatId, teacherId, subjectIds, code } = createSubjectDto;
 
     const subjectWithSameCode = await this.subjectRepository.findOne({
       where: {
@@ -47,22 +47,28 @@ export class SubjectsService {
       throw new NotFoundException(`Teacher #${teacherId} not found`);
     }
 
-    let subjectExist;
+    const prerequisites: Subject[] = [];
 
-    if (subjectId) {
-      subjectExist = await this.subjectRepository.findOne(subjectId);
+    if (subjectIds) {
+      const subjectExistsPromises = subjectIds.map(async (subjectId) => {
+        const subjectExist = await this.subjectRepository.findOne(subjectId);
 
-      if (!subjectExist) {
-        throw new NotFoundException(`Subject #${subjectId} not found`);
-      }
+        if (!subjectExist) {
+          throw new NotFoundException(`Subject #${subjectId} not found`);
+        }
+
+        prerequisites.push(subjectExist);
+      });
+
+      await Promise.all(subjectExistsPromises);
     }
 
     const subject = this.subjectRepository.create(createSubjectDto);
     subject.secretariat = secretariatExist;
     subject.teacher = teacherExist;
 
-    if (subjectId) {
-      subject.prequisiteSubject = subjectExist;
+    if (prerequisites.length > 0) {
+      subject.prerequisites = prerequisites;
     }
 
     return this.subjectRepository.save(subject);
@@ -72,8 +78,10 @@ export class SubjectsService {
     return `This action returns all subjects`;
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} subject`;
+  findOne(id: string) {
+    return this.subjectRepository.findOne(id, {
+      relations: ['prerequisites'],
+    });
   }
 
   update(id: number, updateSubjectDto: UpdateSubjectDto) {

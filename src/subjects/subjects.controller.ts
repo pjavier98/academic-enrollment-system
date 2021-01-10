@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Put, Param, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Put,
+  Param,
+  Delete,
+} from '@nestjs/common';
 import { SubjectsService } from './subjects.service';
 import { CreateSubjectDto } from './dto/create-subject.dto';
 import { UpdateSubjectDto } from './dto/update-subject.dto';
@@ -19,7 +27,7 @@ export class SubjectsController {
 
   @Get(':id')
   findOne(@Param('id') id: string) {
-    return this.subjectsService.findOne(+id);
+    return this.subjectsService.findOne(id);
   }
 
   @Put(':id')

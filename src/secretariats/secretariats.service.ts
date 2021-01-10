@@ -46,8 +46,11 @@ export class SecretariatsService {
       );
     }
 
-    const secretariat = this.secretariatRepository.create(createSecretariatDto);
-    secretariat.department = departmentExist;
+    const secretariat = this.secretariatRepository.create({
+      ...createSecretariatDto,
+      department: departmentExist,
+    });
+
     return this.secretariatRepository.save(secretariat);
   }
 
@@ -55,6 +58,16 @@ export class SecretariatsService {
     const secretariats = await this.secretariatRepository.find({
       relations: ['department'],
     });
+
+    // const secretariats = await this.secretariatRepository
+    //   .createQueryBuilder('secretariat')
+    //   .groupBy('secretariat.type')
+    //   // .innerJoinAndSelect('secretariat.department', 'department.id')
+    //   // .groupBy('department.id.name')
+    //   // .addGroupBy('department.id.id')
+    //   .addGroupBy('secretariat.id')
+    //   // .orderBy('secretariat.type', 'DESC')
+    //   .getRawMany();
 
     return secretariats;
   }
