@@ -56,20 +56,40 @@ export class SecretariatsService {
 
   async findAll() {
     const secretariats = await this.secretariatRepository.find({
-      relations: ['department'],
+      relations: ['department', 'subjects', 'subjects.prerequisites'],
+      select: ['type'],
     });
 
-    // const secretariats = await this.secretariatRepository
-    //   .createQueryBuilder('secretariat')
-    //   .groupBy('secretariat.type')
-    //   // .innerJoinAndSelect('secretariat.department', 'department.id')
-    //   // .groupBy('department.id.name')
-    //   // .addGroupBy('department.id.id')
-    //   .addGroupBy('secretariat.id')
-    //   // .orderBy('secretariat.type', 'DESC')
-    //   .getRawMany();
+    const parsedSecretariats = secretariats.map((secretariat) => {
+      const { department, subjects, type } = secretariat;
 
-    return secretariats;
+      const parsedDepartment = {
+        name: department.name,
+      };
+
+      const parsedSubjects = subjects.map((subject) => ({
+        name: subject.name,
+        code: subject.code,
+        credits_number: subject.credits_number,
+        minimum_credits_number_to_attend:
+          subject.minimum_credits_number_to_attend,
+        prerequisites: subject.prerequisites.map((prerequisite) => ({
+          name: prerequisite.name,
+          code: prerequisite.code,
+          credits_number: prerequisite.credits_number,
+          minimum_credits_number_to_attend:
+            prerequisite.minimum_credits_number_to_attend,
+        })),
+      }));
+
+      return {
+        type,
+        department: parsedDepartment,
+        subjects: parsedSubjects,
+      };
+    });
+
+    return parsedSecretariats;
   }
 
   findOne(id: number) {
