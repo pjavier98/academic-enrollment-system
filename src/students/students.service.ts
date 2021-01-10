@@ -40,13 +40,28 @@ export class StudentsService {
   }
 
   async findOne(id: string) {
-    const student = await this.studentRepository.findOne(id);
+    const student = await this.studentRepository.findOne(id, {
+      relations: ['enrolledSubjects', 'enrolledSubjects.subject'],
+      select: ['name', 'enrollmentNumber'],
+    });
 
     if (!student) {
       throw new NotFoundException(`Student #${id} not found`);
     }
 
-    return student;
+    const { enrolledSubjects, ...studentData } = student;
+
+    const parsedEnrolledSubjects = enrolledSubjects.map((enrolledSubject) => ({
+      name: enrolledSubject.subject.name,
+      code: enrolledSubject.subject.code,
+    }));
+
+    const parsedStudent = {
+      ...studentData,
+      parsedEnrolledSubjects,
+    };
+
+    return parsedStudent;
   }
 
   update(id: number, updateStudentDto: UpdateStudentDto) {
