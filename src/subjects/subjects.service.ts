@@ -78,10 +78,46 @@ export class SubjectsService {
     return `This action returns all subjects`;
   }
 
-  findOne(id: string) {
-    return this.subjectRepository.findOne(id, {
-      relations: ['prerequisites'],
+  async findOne(id: string) {
+    const subject = await this.subjectRepository.findOne(id, {
+      relations: [
+        'prerequisites',
+        'teacher',
+        'enrolledSubjects',
+        'enrolledSubjects.student',
+      ],
+      select: ['name', 'code', 'credits_number'],
     });
+
+    const {
+      prerequisites,
+      teacher,
+      enrolledSubjects,
+      ...subjectData
+    } = subject;
+
+    const parsedPrerequistes = prerequisites.map((prerequisite) => ({
+      name: prerequisite.name,
+      code: prerequisite.code,
+    }));
+
+    const parsedTeacher = {
+      name: teacher.name,
+    };
+
+    const parsedEnrolledSubjects = enrolledSubjects.map((enrolledSubject) => ({
+      name: enrolledSubject.student.name,
+      enrollmentNumber: enrolledSubject.student.enrollmentNumber,
+    }));
+
+    const parsedSubject = {
+      ...subjectData,
+      teacher: parsedTeacher,
+      enrolledStudents: parsedEnrolledSubjects,
+      prerequisites: parsedPrerequistes,
+    };
+
+    return parsedSubject;
   }
 
   update(id: number, updateSubjectDto: UpdateSubjectDto) {
