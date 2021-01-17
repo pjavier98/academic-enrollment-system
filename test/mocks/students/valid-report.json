@@ -1,0 +1,8 @@
+{
+  "name": "Pedro Javier",
+  "enrollmentNumber": "172680440",
+  "enrolledSubjects": [
+    { "subject": { "name": "Programação 1", "code": "COMP-001" } },
+    { "subject": { "name": "Programação 2", "code": "COMP-002" } }
+  ]
+}

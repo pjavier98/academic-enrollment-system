@@ -1,0 +1,25 @@
+{
+    "id": 1,
+    "name": "IC",
+    "secretariats": [
+      {
+        "id": 1,
+        "type": "graduation"
+      }
+    ],
+    "teachers": [
+      {
+        "id": 4,
+        "name": "Willy",
+        "email": "willy@ic.ufal.br"
+      }
+    ],
+    "students": [
+      {
+        "id": 1,
+        "name": "Pedro Javier",
+        "email": "pjpc@ic.ufal.br",
+        "enrollmentNumber": "172680440"
+      }
+    ]
+  }

@@ -227,16 +227,8 @@ export class EnrolledSubjectsService {
     return this.enrolledSubjectRepository.save(enrolledSubject);
   }
 
-  findAll() {
-    return `This action returns all enrolledSubjects`;
-  }
-
   findOne(id: string) {
-    try {
-      return this.enrolledSubjectRepository.findOneEnrolledSubject(id);
-    } catch (error) {
-      console.log(error);
-    }
+    return this.enrolledSubjectRepository.findOneEnrolledSubject(id);
   }
 
   async updateGrade(
@@ -259,13 +251,5 @@ export class EnrolledSubjectsService {
     return this.enrolledSubjectRepository.findOne(id, {
       relations: ['student', 'subject'],
     });
-  }
-
-  update(id: string, updateEnrolledSubjectDto: UpdateEnrolledSubjectDto) {
-    return `This action updates a #${id} enrolledSubject`;
-  }
-
-  remove(id: string) {
-    return `This action removes a #${id} enrolledSubject`;
   }
 }

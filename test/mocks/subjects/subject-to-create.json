@@ -1,0 +1,11 @@
+{
+	"name": "PAA",
+	"code": "COMP-005",
+	"credits_number": 60,
+	"minimum_credits_number_to_attend": 0,
+	"secretariatId": 1,
+	"teacherId": 6,
+	"subjectIds": [
+		32
+	]
+}

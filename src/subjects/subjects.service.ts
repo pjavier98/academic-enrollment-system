@@ -2,9 +2,8 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Secretariat } from '../secretariats/entities/secretariat.entity';
 import { Teacher } from '../teachers/entities/teacher.entity';
-import { Like, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { CreateSubjectDto } from './dto/create-subject.dto';
-import { UpdateSubjectDto } from './dto/update-subject.dto';
 import { Subject } from './entities/subject.entity';
 
 @Injectable()
@@ -63,19 +62,14 @@ export class SubjectsService {
       await Promise.all(subjectExistsPromises);
     }
 
-    const subject = this.subjectRepository.create(createSubjectDto);
-    subject.secretariat = secretariatExist;
-    subject.teacher = teacherExist;
-
-    if (prerequisites.length > 0) {
-      subject.prerequisites = prerequisites;
-    }
+    const subject = this.subjectRepository.create({
+      ...createSubjectDto,
+      secretariat: secretariatExist,
+      teacher: teacherExist,
+      prerequisites,
+    });
 
     return this.subjectRepository.save(subject);
-  }
-
-  findAll() {
-    return `This action returns all subjects`;
   }
 
   async findOne(id: string) {
@@ -88,6 +82,10 @@ export class SubjectsService {
       ],
       select: ['name', 'code', 'credits_number'],
     });
+
+    if (!subject) {
+      throw new NotFoundException(`Subject #${id} not found`);
+    }
 
     const {
       prerequisites,
@@ -118,13 +116,5 @@ export class SubjectsService {
     };
 
     return parsedSubject;
-  }
-
-  update(id: number, updateSubjectDto: UpdateSubjectDto) {
-    return `This action updates a #${id} subject`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} subject`;
   }
 }

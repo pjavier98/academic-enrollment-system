@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { DepartmentsModule } from './departments/departments.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { SecretariatsModule } from './secretariats/secretariats.module';
@@ -14,12 +12,12 @@ import { EnrolledSubjectsModule } from './enrolled-subjects/enrolled-subjects.mo
     TypeOrmModule.forRoot(),
     DepartmentsModule,
     SecretariatsModule,
-    TeachersModule,
     StudentsModule,
+    TeachersModule,
     SubjectsModule,
     EnrolledSubjectsModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
+  controllers: [],
+  providers: [],
 })
 export class AppModule {}

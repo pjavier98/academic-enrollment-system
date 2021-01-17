@@ -1,9 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Department } from 'src/departments/entities/department.entity';
+import { Department } from '../departments/entities/department.entity';
 import { Repository } from 'typeorm';
 import { CreateTeacherDto } from './dto/create-teacher.dto';
-import { UpdateTeacherDto } from './dto/update-teacher.dto';
 import { Teacher } from './entities/teacher.entity';
 
 @Injectable()
@@ -27,14 +26,12 @@ export class TeachersService {
       throw new NotFoundException(`Department #${departmentId} not found`);
     }
 
-    const teacher = this.teacherRepository.create(createTeacherDto);
-    teacher.department = departmentExist;
+    const teacher = this.teacherRepository.create({
+      ...createTeacherDto,
+      department: departmentExist,
+    });
 
     return this.teacherRepository.save(teacher);
-  }
-
-  findAll() {
-    return this.teacherRepository.find();
   }
 
   async findOne(id: string) {
@@ -45,13 +42,5 @@ export class TeachersService {
     }
 
     return teacher;
-  }
-
-  update(id: number, updateTeacherDto: UpdateTeacherDto) {
-    return `This action updates a #${id} teacher`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} teacher`;
   }
 }

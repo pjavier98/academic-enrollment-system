@@ -9,6 +9,7 @@ import { HttpException, NotFoundException } from '@nestjs/common';
 type MockRepository<T = any> = Partial<Record<keyof Repository<T>, jest.Mock>>;
 const createMockRepository = <T = any>(): MockRepository<T> => ({
   findOne: jest.fn(),
+  find: jest.fn(),
   create: jest.fn(),
   save: jest.fn(),
 });
@@ -16,6 +17,8 @@ const createMockRepository = <T = any>(): MockRepository<T> => ({
 const secretariatsMocks = {
   graduationValid: require('../../test/mocks/secretariats/graduation-valid.json'),
   posGraduationValid: require('../../test/mocks/secretariats/pos-graduation-valid.json'),
+  validReport: require('../../test/mocks/secretariats/valid-report.json'),
+  validParsedReport: require('../../test/mocks/secretariats/valid-parsed-report.json'),
 };
 
 const departementsMocks = {
@@ -119,6 +122,18 @@ describe('SecretariatsService', () => {
       } catch (error) {
         expect(error).toBeInstanceOf(HttpException);
       }
+    });
+  });
+
+  describe('findAll', () => {
+    it('should be able to return a list per secretary with the subject offered in the current period', async () => {
+      jest
+        .spyOn(secretariatRepository, 'find')
+        .mockReturnValue(secretariatsMocks.validReport);
+
+      const expectedSecretariats = await secretariatService.findAll();
+
+      expect(expectedSecretariats).toEqual(secretariatsMocks.validParsedReport);
     });
   });
 });

@@ -1,0 +1,74 @@
+[
+    {
+      "type": "graduation",
+      "department": {
+        "id": 1,
+        "name": "IC"
+      },
+      "subjects": [
+        {
+          "id": 32,
+          "name": "Programação 1",
+          "code": "COMP-001",
+          "credits_number": 60,
+          "minimum_credits_number_to_attend": 0,
+          "prerequisites": []
+        },
+        {
+          "id": 34,
+          "name": "Programação 2",
+          "code": "COMP-002",
+          "credits_number": 60,
+          "minimum_credits_number_to_attend": 60,
+          "prerequisites": [
+            {
+              "id": 32,
+              "name": "Programação 1",
+              "code": "COMP-001",
+              "credits_number": 60,
+              "minimum_credits_number_to_attend": 0
+            }
+          ]
+        },
+        {
+          "id": 46,
+          "name": "Programação 3",
+          "code": "COMP-003",
+          "credits_number": 60,
+          "minimum_credits_number_to_attend": 120,
+          "prerequisites": [
+            {
+              "id": 34,
+              "name": "Programação 2",
+              "code": "COMP-002",
+              "credits_number": 60,
+              "minimum_credits_number_to_attend": 60
+            },
+            {
+              "id": 32,
+              "name": "Programação 1",
+              "code": "COMP-001",
+              "credits_number": 60,
+              "minimum_credits_number_to_attend": 0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "pos_graduation",
+      "department": {
+        "id": 1,
+        "name": "IC"
+      },
+      "subjects": []
+    },
+    {
+      "type": "pos_graduation",
+      "department": {
+        "id": 6,
+        "name": "Instituto de Física"
+      },
+      "subjects": []
+    }
+  ]

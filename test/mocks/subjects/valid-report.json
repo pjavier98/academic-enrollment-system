@@ -1,0 +1,33 @@
+{
+    "name": "Programação 2",
+    "code": "COMP-002",
+    "credits_number": 60,
+    "prerequisites": [
+      {
+        "id": 32,
+        "name": "Programação 1",
+        "code": "COMP-001",
+        "credits_number": 60,
+        "minimum_credits_number_to_attend": 0
+      }
+    ],
+    "teacher": {
+      "id": 6,
+      "name": "Marcio",
+      "email": "marcio@ic.ufal.br"
+    },
+    "enrolledSubjects": [
+      {
+        "id": 7,
+        "grade": null,
+        "isApproved": false,
+        "student": {
+          "id": 1,
+          "name": "Pedro Javier",
+          "email": "pjpc@ic.ufal.br",
+          "enrollmentNumber": "172680440",
+          "type": "graduation"
+        }
+      }
+    ]
+  }

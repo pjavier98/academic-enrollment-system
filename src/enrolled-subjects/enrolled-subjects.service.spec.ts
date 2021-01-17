@@ -25,17 +25,15 @@ const enrolledSubjectsMockRepository = (): any => ({
 
 const enrolledSubjectsMocks = {
   valid: require('../../test/mocks/enrolled-subjects/enrolled-subject-valid.json'),
+  newSubjectValid: require('../../test/mocks/enrolled-subjects/new-subject-valid.json'),
   subject: require('../../test/mocks/enrolled-subjects/subject.json'),
-  student: require('../../test/mocks/enrolled-subjects/student.json'),
+  graduationStudent: require('../../test/mocks/enrolled-subjects/graduation-student-valid.json'),
+  posGraduationSubject: require('../../test/mocks/enrolled-subjects/pos-graduation-subject-valid.json'),
   posGraduationStudent: require('../../test/mocks/enrolled-subjects/pos-graduation-student.json'),
 };
 
 const subjectsMocks = {
-  valid: require('../../test/mocks/subjects/subject-valid.json'),
-};
-
-const studentMocks = {
-  valid: require('../../test/mocks/students/student-valid.json'),
+  valid: require('../../test/mocks/subjects/valid-subject.json'),
 };
 
 const enrolledStudentUseCases = [
@@ -48,9 +46,9 @@ const enrolledStudentUseCases = [
 ];
 
 describe('EnrolledSubjectsService', () => {
-  let enrolledSubjectsService: EnrolledSubjectsService;
+  let enrolledSubjectService: EnrolledSubjectsService;
 
-  let enrolledSubjectsRepository: EnrolledSubjectRepository;
+  let enrolledSubjectRepository: EnrolledSubjectRepository;
   let subjectRepository: MockRepository;
   let studentRepository: MockRepository;
 
@@ -73,11 +71,11 @@ describe('EnrolledSubjectsService', () => {
       ],
     }).compile();
 
-    enrolledSubjectsService = module.get<EnrolledSubjectsService>(
+    enrolledSubjectService = module.get<EnrolledSubjectsService>(
       EnrolledSubjectsService,
     );
 
-    enrolledSubjectsRepository = module.get<EnrolledSubjectRepository>(
+    enrolledSubjectRepository = module.get<EnrolledSubjectRepository>(
       getCustomRepositoryToken(EnrolledSubjectRepository),
     );
 
@@ -87,9 +85,9 @@ describe('EnrolledSubjectsService', () => {
   });
 
   it('should be defined', () => {
-    expect(enrolledSubjectsService).toBeDefined();
+    expect(enrolledSubjectService).toBeDefined();
 
-    expect(enrolledSubjectsRepository).toBeDefined();
+    expect(enrolledSubjectRepository).toBeDefined();
     expect(subjectRepository).toBeDefined();
     expect(studentRepository).toBeDefined();
   });
@@ -98,7 +96,7 @@ describe('EnrolledSubjectsService', () => {
     it('should not be able to enroll a non-existent subject', async () => {
       try {
         jest.spyOn(subjectRepository, 'findOne').mockReturnValue(undefined);
-        await enrolledSubjectsService.create(enrolledSubjectsMocks.valid);
+        await enrolledSubjectService.create(enrolledSubjectsMocks.valid);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
       }
@@ -110,7 +108,7 @@ describe('EnrolledSubjectsService', () => {
           .spyOn(subjectRepository, 'findOne')
           .mockReturnValue(subjectsMocks.valid);
         jest.spyOn(studentRepository, 'findOne').mockReturnValue(undefined);
-        await enrolledSubjectsService.create(enrolledSubjectsMocks.valid);
+        await enrolledSubjectService.create(enrolledSubjectsMocks.valid);
       } catch (error) {
         expect(error).toBeInstanceOf(NotFoundException);
       }
@@ -124,16 +122,16 @@ describe('EnrolledSubjectsService', () => {
 
         jest
           .spyOn(studentRepository, 'findOne')
-          .mockReturnValue(enrolledSubjectsMocks.student);
+          .mockReturnValue(enrolledSubjectsMocks.graduationStudent);
 
         jest
           .spyOn(
-            enrolledSubjectsService,
+            enrolledSubjectService,
             'enrolledStudentInASubjectWithInsufficientCredits',
           )
           .mockImplementation();
 
-        await enrolledSubjectsService.create(enrolledSubjectsMocks.valid);
+        await enrolledSubjectService.create(enrolledSubjectsMocks.valid);
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
       }
@@ -152,23 +150,23 @@ describe('EnrolledSubjectsService', () => {
 
         jest
           .spyOn(studentRepository, 'findOne')
-          .mockReturnValue(enrolledSubjectsMocks.student);
+          .mockReturnValue(enrolledSubjectsMocks.graduationStudent);
 
         enrolledStudentUseCases.forEach(
           (enrolledStudentUseCase: keyof EnrolledSubjectsService) => {
             if (enrolledStudentUseCase !== currentUseCase) {
               jest
-                .spyOn(enrolledSubjectsService, enrolledStudentUseCase)
+                .spyOn(enrolledSubjectService, enrolledStudentUseCase)
                 .mockImplementation();
             }
           },
         );
 
         jest
-          .spyOn(enrolledSubjectsRepository, 'findStudentCredits')
+          .spyOn(enrolledSubjectRepository, 'findStudentCredits')
           .mockResolvedValue(insufficientCredits);
 
-        await enrolledSubjectsService.create(enrolledSubjectsMocks.valid);
+        await enrolledSubjectService.create(enrolledSubjectsMocks.valid);
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
       }
@@ -185,23 +183,23 @@ describe('EnrolledSubjectsService', () => {
 
         jest
           .spyOn(studentRepository, 'findOne')
-          .mockReturnValue(enrolledSubjectsMocks.student);
+          .mockReturnValue(enrolledSubjectsMocks.graduationStudent);
 
         enrolledStudentUseCases.forEach(
           (enrolledStudentUseCase: keyof EnrolledSubjectsService) => {
             if (enrolledStudentUseCase !== currentUseCase) {
               jest
-                .spyOn(enrolledSubjectsService, enrolledStudentUseCase)
+                .spyOn(enrolledSubjectService, enrolledStudentUseCase)
                 .mockImplementation();
             }
           },
         );
 
         jest
-          .spyOn(enrolledSubjectsRepository, 'findSubjectPrerequisites')
+          .spyOn(enrolledSubjectRepository, 'findSubjectPrerequisites')
           .mockResolvedValue([]);
 
-        await enrolledSubjectsService.create(enrolledSubjectsMocks.valid);
+        await enrolledSubjectService.create(enrolledSubjectsMocks.valid);
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
       }
@@ -217,23 +215,23 @@ describe('EnrolledSubjectsService', () => {
 
         jest
           .spyOn(studentRepository, 'findOne')
-          .mockReturnValue(enrolledSubjectsMocks.student);
+          .mockReturnValue(enrolledSubjectsMocks.graduationStudent);
 
         enrolledStudentUseCases.forEach(
           (enrolledStudentUseCase: keyof EnrolledSubjectsService) => {
             if (enrolledStudentUseCase !== currentUseCase) {
               jest
-                .spyOn(enrolledSubjectsService, enrolledStudentUseCase)
+                .spyOn(enrolledSubjectService, enrolledStudentUseCase)
                 .mockImplementation();
             }
           },
         );
 
         jest
-          .spyOn(enrolledSubjectsRepository, 'findOne')
+          .spyOn(enrolledSubjectRepository, 'findOne')
           .mockResolvedValue(enrolledSubjectsMocks.subject);
 
-        await enrolledSubjectsService.create(enrolledSubjectsMocks.valid);
+        await enrolledSubjectService.create(enrolledSubjectsMocks.valid);
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
       }
@@ -248,27 +246,27 @@ describe('EnrolledSubjectsService', () => {
 
         jest
           .spyOn(subjectRepository, 'findOne')
-          .mockReturnValue(enrolledSubjectsMocks.subject);
+          .mockReturnValue(enrolledSubjectsMocks.posGraduationSubject);
 
         jest
           .spyOn(studentRepository, 'findOne')
-          .mockReturnValue(enrolledSubjectsMocks.student);
+          .mockReturnValue(enrolledSubjectsMocks.graduationStudent);
 
         enrolledStudentUseCases.forEach(
           (enrolledStudentUseCase: keyof EnrolledSubjectsService) => {
             if (enrolledStudentUseCase !== currentUseCase) {
               jest
-                .spyOn(enrolledSubjectsService, enrolledStudentUseCase)
+                .spyOn(enrolledSubjectService, enrolledStudentUseCase)
                 .mockImplementation();
             }
           },
         );
 
         jest
-          .spyOn(enrolledSubjectsRepository, 'findStudentCredits')
+          .spyOn(enrolledSubjectRepository, 'findStudentCredits')
           .mockResolvedValue(insufficientCreditsForPosGraduationSubject);
 
-        await enrolledSubjectsService.create(enrolledSubjectsMocks.valid);
+        await enrolledSubjectService.create(enrolledSubjectsMocks.valid);
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
       }
@@ -291,16 +289,48 @@ describe('EnrolledSubjectsService', () => {
           (enrolledStudentUseCase: keyof EnrolledSubjectsService) => {
             if (enrolledStudentUseCase !== currentUseCase) {
               jest
-                .spyOn(enrolledSubjectsService, enrolledStudentUseCase)
+                .spyOn(enrolledSubjectService, enrolledStudentUseCase)
                 .mockImplementation();
             }
           },
         );
 
-        await enrolledSubjectsService.create(enrolledSubjectsMocks.valid);
+        await enrolledSubjectService.create(enrolledSubjectsMocks.valid);
       } catch (error) {
         expect(error).toBeInstanceOf(BadRequestException);
       }
+    });
+
+    it('should be able to enrolled in a subject', async () => {
+      jest
+        .spyOn(subjectRepository, 'findOne')
+        .mockReturnValue(enrolledSubjectsMocks.subject);
+
+      jest
+        .spyOn(studentRepository, 'findOne')
+        .mockReturnValue(enrolledSubjectsMocks.posGraduationStudent);
+
+      enrolledStudentUseCases.forEach(
+        (enrolledStudentUseCase: keyof EnrolledSubjectsService) => {
+          jest
+            .spyOn(enrolledSubjectService, enrolledStudentUseCase)
+            .mockImplementation();
+        },
+      );
+
+      jest
+        .spyOn(enrolledSubjectRepository, 'create')
+        .mockReturnValue(enrolledSubjectsMocks.newSubjectValid);
+
+      jest
+        .spyOn(enrolledSubjectRepository, 'save')
+        .mockReturnValue(enrolledSubjectsMocks.newSubjectValid);
+
+      const newEnrolledSubject = await enrolledSubjectService.create(
+        enrolledSubjectsMocks.valid,
+      );
+
+      expect(newEnrolledSubject).toEqual(enrolledSubjectsMocks.newSubjectValid);
     });
   });
 });

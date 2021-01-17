@@ -1,10 +1,8 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { DepartmentsService } from 'src/departments/departments.service';
-import { Department } from 'src/departments/entities/department.entity';
+import { Department } from '../departments/entities/department.entity';
 import { Repository } from 'typeorm';
 import { CreateStudentDto } from './dto/create-student.dto';
-import { UpdateStudentDto } from './dto/update-student.dto';
 import { Student } from './entities/student.entity';
 
 @Injectable()
@@ -28,15 +26,12 @@ export class StudentsService {
       throw new NotFoundException(`Department #${departmentId} not found`);
     }
 
-    const student = this.studentRepository.create(createStudentDto);
-
-    student.department = departmentExist;
+    const student = this.studentRepository.create({
+      ...createStudentDto,
+      department: departmentExist,
+    });
 
     return this.studentRepository.save(student);
-  }
-
-  findAll() {
-    return this.studentRepository.find();
   }
 
   async findOne(id: string) {
@@ -58,17 +53,9 @@ export class StudentsService {
 
     const parsedStudent = {
       ...studentData,
-      parsedEnrolledSubjects,
+      enrolledSubjects: parsedEnrolledSubjects,
     };
 
     return parsedStudent;
-  }
-
-  update(id: number, updateStudentDto: UpdateStudentDto) {
-    return `This action updates a #${id} student`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} student`;
   }
 }

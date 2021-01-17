@@ -1,8 +1,13 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { CreateDepartmentDto } from './dto/create-department.dto';
-import { UpdateDepartmentDto } from './dto/update-department.dto';
 import { Department } from './entities/department.entity';
 
 @Injectable()
@@ -12,18 +17,25 @@ export class DepartmentsService {
     private readonly departmentRepository: Repository<Department>,
   ) {}
 
-  create(createDepartmentDto: CreateDepartmentDto) {
+  async create(createDepartmentDto: CreateDepartmentDto) {
+    const { name } = createDepartmentDto;
+
+    const departmentExist = await this.departmentRepository.findOne({
+      where: {
+        name,
+      },
+    });
+
+    if (!departmentExist) {
+      throw new HttpException(
+        'Already exist a department with the same name',
+        HttpStatus.CONFLICT,
+      );
+    }
+
     const department = this.departmentRepository.create(createDepartmentDto);
 
     return this.departmentRepository.save(department);
-  }
-
-  async findAll() {
-    const departments = await this.departmentRepository.find({
-      relations: ['secretariats', 'teachers', 'students'],
-    });
-
-    return departments;
   }
 
   async findOne(id: string) {
@@ -36,13 +48,5 @@ export class DepartmentsService {
     }
 
     return department;
-  }
-
-  update(id: number, updateDepartmentDto: UpdateDepartmentDto) {
-    return `This action updates a #${id} department`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} department`;
   }
 }
