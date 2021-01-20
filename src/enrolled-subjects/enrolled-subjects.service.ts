@@ -12,7 +12,7 @@ import { UpdateEnrolledSubjectGradeDto } from './dto/update-enrolled-subject-gra
 import { UpdateEnrolledSubjectDto } from './dto/update-enrolled-subject.dto';
 import { EnrolledSubjectRepository } from './enrolled-subjects.repository';
 import { EnrolledSubject } from './entities/enrolled-subject.entity';
-import { ENOUGH_CREDITS_TO_ENROLL_POS_GRADUATION_SUBJECT_FOR_GRADUATION_STUDENT } from '../constants/enoughCreditsToEnrollPosGraduationSubjectForGraduationStudent';
+import { CREDITS_TO_ENROLL_POS_GRADUATION_SUBJECT_FOR_GRADUATION_STUDENT } from '../constants/enoughCreditsToEnrollPosGraduationSubjectForGraduationStudent';
 
 @Injectable()
 export class EnrolledSubjectsService {
@@ -143,7 +143,7 @@ export class EnrolledSubjectsService {
 
       const hasEnoughCreditsToEnrollTheSubject =
         studentCredits >=
-        ENOUGH_CREDITS_TO_ENROLL_POS_GRADUATION_SUBJECT_FOR_GRADUATION_STUDENT;
+        CREDITS_TO_ENROLL_POS_GRADUATION_SUBJECT_FOR_GRADUATION_STUDENT;
 
       if (!hasEnoughCreditsToEnrollTheSubject) {
         throw new BadRequestException(

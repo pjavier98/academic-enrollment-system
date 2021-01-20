@@ -3,7 +3,7 @@ import { SecretariatsService } from './secretariats.service';
 import { SecretariatsController } from './secretariats.controller';
 import { Secretariat } from './entities/secretariat.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { Department } from 'src/departments/entities/department.entity';
+import { Department } from '../departments/entities/department.entity';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Secretariat, Department])],

@@ -26,7 +26,7 @@ export class DepartmentsService {
       },
     });
 
-    if (!departmentExist) {
+    if (departmentExist) {
       throw new HttpException(
         'Already exist a department with the same name',
         HttpStatus.CONFLICT,

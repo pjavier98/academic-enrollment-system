@@ -2,5 +2,6 @@
     "id": 1,
     "name": "Pedro Javier",
     "email": "pjpc@ic.ufal.br",
-    "enrollmentNumber": "172680440"
+    "enrollmentNumber": "172680440",
+    "type": "graduation"
 }
